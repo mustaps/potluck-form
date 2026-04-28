@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Systems Team Pot Luck Party</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  </head>
+  <body>
+
+    <!-- ───────────── NAVBAR ───────────── -->
+    <nav class="navbar">
+      <div class="nav-brand">
+        <div class="brand-logo"><i class="fa-solid fa-utensils"></i></div>
+        <span>MealPick</span>
+      </div>
+      <div class="nav-tabs">
+        <button class="nav-btn active" id="formTabBtn" onclick="showTab('form')">
+          <i class="fa-solid fa-bowl-food"></i>
+          <span>Form</span>
+        </button>
+        <button class="nav-btn" id="responsesTabBtn" onclick="showTab('responses')">
+          <i class="fa-solid fa-chart-bar"></i>
+          <span>Responses</span>
+          <span class="badge" id="responseBadge">0</span>
+        </button>
+      </div>
+      <button class="share-btn" onclick="openShareModal()">
+        <i class="fa-solid fa-share-nodes"></i>
+        <span>Share</span>
+      </button>
+    </nav>
+
+    <!-- ───────────── FORM TAB ───────────── -->
+    <div id="formTab" class="tab-content active">
+      <div class="hero-section">
+        <div class="hero-particles" id="heroParticles"></div>
+        <div class="hero-content">
+          <div class="hero-icon-wrap">
+            <div class="hero-icon-ring"></div>
+            <div class="hero-icon"><i class="fa-solid fa-bowl-food"></i></div>
+          </div>
+          <h1 class="hero-title">Systems Team<br/><span>Pot Luck Party</span></h1>
+          <p class="hero-sub">Spin the wheel &amp; lock in your meal group for the event</p>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-container">
+
+          <!-- Step 1 – Name -->
+          <div class="step-card" id="stepName">
+            <div class="step-header">
+              <div class="step-num">1</div>
+              <div>
+                <h2 class="step-title">Who are you?</h2>
+                <p class="step-desc">Select your name from the list below</p>
+              </div>
+            </div>
+            <div class="input-wrap">
+              <i class="fa-solid fa-user input-icon"></i>
+              <select id="userName" class="text-input select-input">
+                <option value="">-- Select your name --</option>
+                <option>Senthil Kumar Kanakasabai</option>
+                <option>Abhinav Kumar</option>
+                <option>Akshada</option>
+                <option>Amrutha Raja</option>
+                <option>Anoop Vidhyadharan</option>
+                <option>Anusha Nune</option>
+                <option>Arul Murugan</option>
+                <option>Ashwin</option>
+                <option>Balaji S</option>
+                <option>Deepak Kothari</option>
+                <option>Dhanasekar</option>
+                <option>Divyashree K</option>
+                <option>DurgaDevi</option>
+                <option>Gajendra S B</option>
+                <option>Hemant Pai</option>
+                <option>Kallesha G</option>
+                <option>Krishnan</option>
+                <option>Kumar Gurram</option>
+                <option>Madhukar S</option>
+                <option>Meghana M S</option>
+                <option>Niharika Srivastava</option>
+                <option>Nikitha</option>
+                <option>Nirupama</option>
+                <option>Parvathi</option>
+                <option>Pooja</option>
+                <option>Rajkumar</option>
+                <option>Rupali</option>
+                <option>Samsuddin Mustapa</option>
+                <option>Sangeeta Naik</option>
+                <option>Saranya</option>
+                <option>Senthilmurugan Sanmugam</option>
+                <option>Suby Ann</option>
+                <option>Vaishali</option>
+                <option>Vaishnavi</option>
+                <option>Vijay Nanjunda</option>
+                <option>Vinod</option>
+                <option>Romit</option>
+                <option>Ankit</option>
+                <option>Avanish</option>
+                <option>Anoop MP</option>
+              </select>
+              <i class="fa-solid fa-chevron-down select-arrow"></i>
+            </div>
+            <span class="error-msg" id="nameError"><i class="fa-solid fa-circle-exclamation"></i> Please select your name.</span>
+
+            <!-- Special Guest Banner -->
+            <div class="special-guest-banner" id="specialGuestBanner" style="display:none">
+              <!-- Floating food particles -->
+              <div class="sg-particles" id="sgParticles"></div>
+
+              <!-- Top badge -->
+              <div class="sg-badge">
+                <i class="fa-solid fa-crown"></i> VIP Special Guest
+              </div>
+
+              <!-- Big icon -->
+              <div class="sg-icon-wrap">
+                <div class="sg-icon-ring"></div>
+                <div class="sg-icon-ring sg-icon-ring2"></div>
+                <div class="sg-icon">
+                  <span class="sg-emoji">&#x1F31F;</span>
+                </div>
+              </div>
+
+              <!-- Headline -->
+              <h3 class="sg-headline">
+                <span class="sg-wave">&#x1F389;</span>
+                You are our Special Guest!
+                <span class="sg-wave">&#x1F389;</span>
+              </h3>
+
+              <!-- Message -->
+              <p class="sg-message">
+                We'd love for you to join us as our guest at our potluck! Come for the company, stay for the food
+                <span class="sg-dash">&mdash;</span>
+                and please arrive with a seriously good appetite. Calorie counting is strictly banned.
+              </p>
+
+              <!-- Food icons row -->
+              <div class="sg-food-row">
+                <span title="Starter">&#x1F957;</span>
+                <span title="Main Course">&#x1F372;</span>
+                <span title="Dessert">&#x1F370;</span>
+                <span title="Drinks">&#x1F379;</span>
+                <span title="Snacks">&#x1F9C1;</span>
+              </div>
+
+              <!-- Divider -->
+              <div class="sg-divider">
+                <span></span><i class="fa-solid fa-utensils"></i><span></span>
+              </div>
+
+              <!-- Sub note -->
+              <p class="sg-note">
+                <i class="fa-solid fa-circle-check"></i>
+                No meal selection needed &mdash; just show up &amp; enjoy!
+              </p>
+            </div>
+
+            <div class="already-submitted-banner" id="alreadyBanner" style="display:none">
+              <div class="already-icon"><i class="fa-solid fa-circle-check"></i></div>
+              <div class="already-text">
+                <span class="already-title">Already Submitted!</span>
+                <span class="already-sub" id="alreadySub">You have already selected your meal preference.</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2 – Food Preference -->
+          <div class="step-card" id="stepPreference" style="display:none">
+            <div class="step-header">
+              <div class="step-num">2</div>
+              <div>
+                <h2 class="step-title">Your Food Preference</h2>
+                <p class="step-desc">May I know if you prefer vegetarian or non-vegetarian food?</p>
+              </div>
+            </div>
+            <div class="pref-cards" id="prefCards">
+              <button class="pref-card" id="prefVeg" onclick="selectPreference('veg')">
+                <span class="pref-card-icon veg">&#x1F331;</span>
+                <span class="pref-card-label">Vegetarian</span>
+                <span class="pref-card-sub">Veg only options</span>
+                <span class="pref-card-check"><i class="fa-solid fa-circle-check"></i></span>
+              </button>
+              <button class="pref-card" id="prefNonveg" onclick="selectPreference('nonveg')">
+                <span class="pref-card-icon nonveg">&#x1F357;</span>
+                <span class="pref-card-label">Non-Vegetarian</span>
+                <span class="pref-card-sub">Non-veg options</span>
+                <span class="pref-card-check"><i class="fa-solid fa-circle-check"></i></span>
+              </button>
+
+            </div>
+            <span class="error-msg" id="prefError"><i class="fa-solid fa-circle-exclamation"></i> Please select your food preference.</span>
+          </div>
+
+          <!-- Step 3 – Spinner Wheel -->
+          <div class="step-card" id="stepWheel" style="display:none">
+            <div class="step-header">
+              <div class="step-num">3</div>
+              <div>
+                <h2 class="step-title">Spin the Wheel!</h2>
+                <p class="step-desc">Click the button below to spin &amp; get your meal assigned</p>
+              </div>
+            </div>
+
+            <!-- Fortune Spinner Wheel -->
+            <div class="spinner-container">
+              <!-- Pointer arrow at top -->
+              <div class="spinner-pointer">
+                <div class="pointer-arrow"></div>
+              </div>
+
+              <!-- Wheel canvas wrapper -->
+              <div class="spinner-wheel-wrap">
+                <canvas id="wheelCanvas" width="340" height="340"></canvas>
+                <!-- Centre hub -->
+                <div class="wheel-hub">
+                  <i class="fa-solid fa-utensils"></i>
+                </div>
+              </div>
+
+              <!-- Spin Button -->
+              <button class="spin-btn" id="spinBtn" onclick="spinWheel()">
+                <span class="spin-btn-inner">
+                  <i class="fa-solid fa-rotate"></i>
+                  <span id="spinBtnText">SPIN!</span>
+                </span>
+              </button>
+            </div>
+
+            <!-- Result Banner -->
+            <div class="spin-result" id="spinResult" style="display:none">
+              <div class="result-icon" id="resultIcon"><i class="fa-solid fa-leaf"></i></div>
+              <div class="result-text">
+                <span class="result-label">🎉 You got</span>
+                <span class="result-value" id="resultValue">Veg – Starter</span>
+              </div>
+            </div>
+
+            <span class="error-msg" id="mealError"><i class="fa-solid fa-circle-exclamation"></i> Please spin the wheel first.</span>
+          </div>
+
+          <!-- Auto-save happens on spin complete, no submit button needed -->
+
+          <p class="footer-note">
+            <i class="fa-solid fa-shield-halved"></i>
+            Responses are saved locally &amp; visible only to the organiser
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ───────────── RESPONSES TAB ───────────── -->
+    <div id="responsesTab" class="tab-content">
+      <div class="responses-page">
+
+        <div class="responses-hero">
+          <h2><i class="fa-solid fa-chart-pie"></i> Team Responses</h2>
+          <p id="responseCount">No responses yet.</p>
+          <div class="responses-actions">
+            <button class="action-btn export-btn" onclick="exportCSV()">
+              <i class="fa-solid fa-file-csv"></i> Export CSV
+            </button>
+            <button class="action-btn clear-btn" onclick="clearResponses()">
+              <i class="fa-solid fa-trash"></i> Clear All
+            </button>
+          </div>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="summary-grid" id="summaryGrid"></div>
+
+        <!-- Table -->
+        <div class="table-wrapper">
+          <table class="responses-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th><i class="fa-solid fa-user"></i> Name</th>
+                <th><i class="fa-solid fa-utensils"></i> Meal Option</th>
+                <th><i class="fa-solid fa-clock"></i> Submitted At</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="responsesBody">
+              <tr>
+                <td colspan="5" class="empty-state">
+                  <i class="fa-solid fa-inbox"></i>
+                  <p>No responses yet. Share the form with your team!</p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ───────────── TOAST ───────────── -->
+    <div class="toast" id="toast">
+      <div class="toast-icon"><i class="fa-solid fa-circle-check"></i></div>
+      <span id="toastMsg">Response submitted!</span>
+    </div>
+
+    <!-- ───────────── SHARE MODAL ───────────── -->
+    <div class="modal-overlay" id="shareModal" onclick="closeShareModal(event)">
+      <div class="modal-box">
+        <div class="modal-header">
+          <h3><i class="fa-solid fa-share-nodes"></i> Share This Form</h3>
+          <button class="modal-close" onclick="closeShareModal()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <p class="modal-desc">Copy the link below and send it to your team members.</p>
+        <div class="link-box">
+          <input type="text" id="shareLink" readonly />
+          <button class="copy-btn" onclick="copyLink()"><i class="fa-solid fa-copy"></i> Copy</button>
+        </div>
+        <div class="share-options">
+          <p>Or share via:</p>
+          <div class="share-icons">
+            <button class="share-icon-btn whatsapp" onclick="shareVia('whatsapp')"><i class="fa-brands fa-whatsapp"></i> WhatsApp</button>
+            <button class="share-icon-btn email" onclick="shareVia('email')"><i class="fa-solid fa-envelope"></i> Email</button>
+            <button class="share-icon-btn telegram" onclick="shareVia('telegram')"><i class="fa-brands fa-telegram"></i> Telegram</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ───────────── ADMIN PASSWORD MODAL ───────────── -->
+    <div class="modal-overlay" id="adminModal" onclick="closeAdminModal(event)">
+      <div class="modal-box admin-modal-box">
+        <div class="modal-header">
+          <h3><i class="fa-solid fa-lock"></i> Admin Verification</h3>
+          <button class="modal-close" onclick="closeAdminModal()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <p class="modal-desc">Enter the admin password to delete this response.</p>
+        <div class="admin-input-wrap">
+          <i class="fa-solid fa-key admin-input-icon"></i>
+          <input
+            type="password"
+            id="adminPassword"
+            class="text-input admin-password-input"
+            placeholder="Enter admin password"
+            autocomplete="off"
+            onkeydown="if(event.key==='Enter') confirmAdminDelete()"
+          />
+          <button class="toggle-pw-btn" onclick="togglePasswordVisibility()" type="button">
+            <i class="fa-solid fa-eye" id="togglePwIcon"></i>
+          </button>
+        </div>
+        <span class="error-msg" id="adminError" style="margin-top:8px">
+          <i class="fa-solid fa-circle-exclamation"></i> Incorrect password. Please try again.
+        </span>
+        <div class="admin-modal-actions">
+          <button class="admin-cancel-btn" onclick="closeAdminModal()">
+            <i class="fa-solid fa-xmark"></i> Cancel
+          </button>
+          <button class="admin-confirm-btn" onclick="confirmAdminDelete()">
+            <i class="fa-solid fa-trash"></i> Delete
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
