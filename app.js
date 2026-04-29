@@ -435,7 +435,7 @@ function spinWheel() {
 /* ─────────────────────────────────────────
    SPIN DONE
 ───────────────────────────────────────── */
-function onSpinDone(idx) {
+async function onSpinDone(idx) {
   const opt     = MEAL_OPTIONS[idx];
   const btn     = document.getElementById("spinBtn");
   const btnText = document.getElementById("spinBtnText");
@@ -451,16 +451,11 @@ function onSpinDone(idx) {
   valueEl.textContent = opt.label;
   resultEl.style.display = "flex";
 
-  // Auto-save the response immediately
+  // Save response instantly to localStorage, sync to JSONBin in background
   const name = document.getElementById("userName").value.trim();
-  await saveResponseRemote({ id: Date.now(), name, meal: opt.label, timestamp: new Date().toISOString() });
+  saveResponseRemote({ id: Date.now(), name, meal: opt.label, timestamp: new Date().toISOString() });
   updateBadge();
   showToast(`\uD83C\uDF89 Saved! ${name} \u2192 ${opt.label}`);
-
-  // Re-sync from JSONBin to ensure all devices are in sync
-  await syncFromBin();
-  renderResponses();
-  updateBadge();
 
   // Lock the name field so it can't be changed after saving
   document.getElementById("userName").disabled = true;
@@ -468,7 +463,7 @@ function onSpinDone(idx) {
   launchConfetti();
   setTimeout(() => {
     resetForm();
-    showTab('responses');
+    showTab("responses");
   }, 3000);
 }
 
@@ -547,10 +542,10 @@ const JSONBIN_URL     = `https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`;
 async function syncFromBin() {
   try {
     const res  = await fetch(`${JSONBIN_URL}/latest`, {
-      headers: { "X-Master-Key": JSONBIN_API_KEY }
+      headers: { "X-Access-Key": JSONBIN_API_KEY }
     });
     const data = await res.json();
-    const responses = Array.isArray(data.record) ? data.record : [];
+    const responses = Array.isArray(data.record?.responses) ? data.record.responses : [];
     localStorage.setItem(STORAGE_KEY, JSON.stringify(responses));
   } catch (err) {
     console.warn("Could not sync from JSONBin, using local cache.", err);
@@ -563,9 +558,9 @@ async function saveToBin(responses) {
       method:  "PUT",
       headers: {
         "Content-Type": "application/json",
-        "X-Master-Key": JSONBIN_API_KEY
+        "X-Access-Key": JSONBIN_API_KEY
       },
-      body: JSON.stringify(responses)
+      body: JSON.stringify({ responses })
     });
   } catch (err) {
     console.warn("Could not save to JSONBin, stored locally only.", err);
@@ -573,12 +568,28 @@ async function saveToBin(responses) {
 }
 
 async function saveResponseRemote(r) {
-  // Save locally first so UI updates instantly
-  const list = getResponses();
-  list.push(r);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-  // Push full updated list to JSONBin
-  await saveToBin(list);
+  // 1. Save to localStorage instantly so UI updates without waiting
+  const localList = getResponses();
+  localList.push(r);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(localList));
+
+  // 2. Fetch latest from JSONBin & push updated list in background
+  try {
+    const res  = await fetch(`${JSONBIN_URL}/latest`, {
+      headers: { "X-Access-Key": JSONBIN_API_KEY }
+    });
+    const data = await res.json();
+    const binList = Array.isArray(data.record?.responses) ? data.record.responses : [];
+    // Merge: avoid duplicate if someone else saved at the same time
+    const alreadyExists = binList.some(x => x.id === r.id);
+    if (!alreadyExists) binList.push(r);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(binList));
+    await saveToBin(binList);
+  } catch (err) {
+    // If bin sync fails, push local list as fallback
+    console.warn("JSONBin sync failed, pushing local list.", err);
+    await saveToBin(localList);
+  }
 }
 
 async function deleteResponseRemote(id) {
@@ -611,7 +622,7 @@ function deleteResponse(id) {
   setTimeout(() => document.getElementById("adminPassword").focus(), 100);
 }
 
-function confirmAdminDelete() {
+async function confirmAdminDelete() {
   const pw = document.getElementById("adminPassword").value;
   if (pw !== ADMIN_PASSWORD) {
     document.getElementById("adminError").classList.add("visible");
