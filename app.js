@@ -453,9 +453,14 @@ function onSpinDone(idx) {
 
   // Auto-save the response immediately
   const name = document.getElementById("userName").value.trim();
-  saveResponse({ id: Date.now(), name, meal: opt.label, timestamp: new Date().toISOString() });
+  await saveResponseRemote({ id: Date.now(), name, meal: opt.label, timestamp: new Date().toISOString() });
   updateBadge();
   showToast(`\uD83C\uDF89 Saved! ${name} \u2192 ${opt.label}`);
+
+  // Re-sync from JSONBin to ensure all devices are in sync
+  await syncFromBin();
+  renderResponses();
+  updateBadge();
 
   // Lock the name field so it can't be changed after saving
   document.getElementById("userName").disabled = true;
@@ -517,7 +522,12 @@ function showTab(tab) {
   document.querySelectorAll(".nav-btn").forEach(el => el.classList.remove("active"));
   document.getElementById(tab + "Tab").classList.add("active");
   document.getElementById(tab + "TabBtn").classList.add("active");
-  if (tab === "responses") renderResponses();
+  if (tab === "responses") {
+    syncFromBin().then(() => {
+      renderResponses();
+      updateBadge();
+    });
+  }
 }
 
 /* ─────────────────────────────────────────
@@ -590,7 +600,7 @@ function getResponses() {
   catch { return []; }
 }
 function saveResponse(r) {
-  saveResponseRemote(r);
+  return saveResponseRemote(r);
 }
 function deleteResponse(id) {
   pendingDeleteId = Number(id);
@@ -621,15 +631,12 @@ function confirmAdminDelete() {
 
   // Now perform the action
   if (targetId === "__CLEAR_ALL__") {
-    localStorage.removeItem(STORAGE_KEY);
-    clearAllRemote();
+    await clearAllRemote();
     renderResponses();
     updateBadge();
     showToast("All responses cleared.");
   } else {
-    const updated = getResponses().filter(r => Number(r.id) !== Number(targetId));
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-    deleteResponseRemote(targetId);
+    await deleteResponseRemote(targetId);
     renderResponses();
     updateBadge();
     showToast("Response deleted.");
