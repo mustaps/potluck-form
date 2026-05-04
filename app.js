@@ -101,7 +101,9 @@ document.addEventListener("DOMContentLoaded", () => {
   updateBadge();
   document.getElementById("shareLink").value = window.location.href;
 
-  // Sync from JSONBin on load, then render
+  // Sync from JSONBin on load in background, render localStorage immediately
+  renderResponses();
+  updateBadge();
   syncFromBin().then(() => {
     renderResponses();
     updateBadge();
@@ -229,7 +231,7 @@ function drawWheel(rotAngle) {
 
   ctx.beginPath();
   ctx.arc(cx, cy, R, 0, 2 * Math.PI);
-  ctx.strokeStyle = "#7c3aed";
+  ctx.strokeStyle = "#1d4ed8";
   ctx.lineWidth   = 6;
   ctx.stroke();
 }
@@ -484,7 +486,7 @@ function resetSpin() {
    CONFETTI
 ───────────────────────────────────────── */
 function launchConfetti() {
-  const colors = ["#7c3aed","#fbbf24","#34d399","#f87171","#60a5fa","#f472b6"];
+  const colors = ["#1d4ed8","#fbbf24","#34d399","#f87171","#60a5fa","#f472b6"];
   for (let i = 0; i < 70; i++) {
     const el = document.createElement("div");
     const sz = Math.random() * 10 + 5;
@@ -518,6 +520,9 @@ function showTab(tab) {
   document.getElementById(tab + "Tab").classList.add("active");
   document.getElementById(tab + "TabBtn").classList.add("active");
   if (tab === "responses") {
+    // Render from localStorage instantly, then sync from JSONBin in background
+    renderResponses();
+    updateBadge();
     syncFromBin().then(() => {
       renderResponses();
       updateBadge();
@@ -568,28 +573,12 @@ async function saveToBin(responses) {
 }
 
 async function saveResponseRemote(r) {
-  // 1. Save to localStorage instantly so UI updates without waiting
-  const localList = getResponses();
-  localList.push(r);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(localList));
-
-  // 2. Fetch latest from JSONBin & push updated list in background
-  try {
-    const res  = await fetch(`${JSONBIN_URL}/latest`, {
-      headers: { "X-Access-Key": JSONBIN_API_KEY }
-    });
-    const data = await res.json();
-    const binList = Array.isArray(data.record?.responses) ? data.record.responses : [];
-    // Merge: avoid duplicate if someone else saved at the same time
-    const alreadyExists = binList.some(x => x.id === r.id);
-    if (!alreadyExists) binList.push(r);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(binList));
-    await saveToBin(binList);
-  } catch (err) {
-    // If bin sync fails, push local list as fallback
-    console.warn("JSONBin sync failed, pushing local list.", err);
-    await saveToBin(localList);
-  }
+  // 1. Append to localStorage instantly
+  const list = getResponses();
+  list.push(r);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+  // 2. Push directly to JSONBin — no GET needed
+  saveToBin(list);
 }
 
 async function deleteResponseRemote(id) {
